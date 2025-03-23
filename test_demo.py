@@ -31,6 +31,24 @@ def select_model(args, device):
             if k.find("model.") >= 0:
                 new_state_dict[k.replace("model.", "")] = v
         model.load_state_dict(new_state_dict, strict=True)
+
+    elif model_id == 35:
+        # SGN test
+        from models.35_SCUnet import SCUNet
+        name, data_range = f"{model_id:02}_SCUNet_100", 1.0
+        # model_path = os.path.join('model_zoo', 'team00_sgn.ckpt')
+        model_path = os.path.join('model_zoo', 'SCUNet_best_model_bs32_mu0_sigma50.pth')
+        model = SCUNet()
+
+        state_dict = torch.load(model_path)["state_dict"]
+        state_dict = {k.replace('module.', ''): v for k, v in state_dict.items()}
+
+        new_state_dict = {}
+        for k, v in state_dict.items():
+            new_state_dict[k] = v
+            # if k.find("model.") >= 0:
+            #     new_state_dict[k.replace("model.", "")] = v
+        model.load_state_dict(new_state_dict, strict=True)
     else:
         raise NotImplementedError(f"Model {model_id} is not implemented.")
 
